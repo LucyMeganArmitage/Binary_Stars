@@ -1,0 +1,19 @@
+def prepare_wrapped_for_plot(phase, *arrays):
+    """
+    Duplicate phase and associated arrays across the wrap boundaries
+    so eclipse windows spanning -0.5/0.5 plot correctly.
+    """
+    phase = np.asarray(phase)
+
+    # Build shifted copies
+    shifts = [0, -1, +1]
+    new_arrays = [[] for _ in range(len(arrays) + 1)]  # +1 for phase
+
+    for s in shifts:
+        shifted_phase = phase + s
+        new_arrays[0].append(shifted_phase)
+        for i, arr in enumerate(arrays):
+            new_arrays[i + 1].append(arr)
+
+    # Concatenate
+    return tuple(np.concatenate(item) for item in new_arrays)
